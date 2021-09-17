@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NaverMapTest</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=0vq4rd2p5h&callback=initMap"></script>
+    <script type="text/javascript">
+        var map = null;
+
+        function initMap() {
+            map = new naver.maps.Map('map', {
+                center: new naver.maps.LatLng(37.3595704, 127.105399),
+                zoom: 10
+            });
+            map.setCursor("crosshair");
+            var polygon = new naver.maps.Polygon({
+                map: map,
+                paths: [[]],
+                fillColor: '#ff0000',
+                fillOpacity: 0.3,
+                strokeColor: '#ff0000',
+                strokeOpacity: 0.6,
+                strokeWeight: 3,
+                clickable: true
+            });
+            var markers = Array();
+            naver.maps.Event.addListener(map, 'click', function(e) {
+
+                var point = e.latlng;
+
+                var path = polygon.getPaths().getAt(0);
+                path.push(point);
+
+                markers.push(new naver.maps.Marker({
+                    map: map,
+                    position: point
+                }));
+
+            });
+            naver.maps.Event.addListener(map, 'rightclick', function(e) {
+
+                var path = polygon.getPaths().getAt(0);
+
+                if(path.length > 0)
+                    path.pop();
+                if(markers.length > 0)
+                    markers.pop().setMap(null);
+            });
+
+            polygon.addListener('click',(e)=>{
+                alert(polygon.getPath());
+            });
+        }
+    </script>
+</head>
+<body  class="vh-100" >
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column" style="height: 500px">
+    <header class="mb-auto">
+        <div>
+            <h3 class="text-xl-center mb-0">Naver Cloud Map Test</h3>
+        </div>
+    </header>
+    <div class="container-fluid d-flex flex-column w-75 h-100">
+        <div class="card w-100 h-100 p-3">
+            <div class="card-body w-100 h-100 " id="map">
+
+            </div>
+        </div>
+    </div>
+    <footer class="mt-auto text-white-50">
+        <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>
+    </footer>
+</div>
+
+</body>
+</html>
